@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>淡江之眼・明日海灣 | 2026 通車紀念</title>
+  
+  <!-- 1. 載入 Tailwind CSS (樣式庫) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 2. 載入 Babel (讓瀏覽器看懂 React 程式碼) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- 設定網頁字體 -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap');
+    
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .font-serif { font-family: 'Noto Serif TC', serif; }
+    
+    /* 動畫設定 */
+    @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.8s ease-out forwards; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    @keyframes slow-zoom { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+    .animate-slow-zoom { animation: slow-zoom 20s linear infinite alternate; }
+  </style>
+</head>
+<body class="bg-white">
+  
+  <!-- React 應用程式掛載點 -->
+  <div id="root"></div>
+
+  <!-- 3. React 應用程式邏輯 -->
+  <script type="text/babel" data-type="module">
+    // --- 關鍵修正：強制所有套件使用相同的 React 依賴版本 (?deps=react@18.2.0) ---
+    import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
+    import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0';
+    import { ArrowRight, ChevronDown, Plus, Minus, X, Sun, Wind, Anchor, MapPin, Calendar, Music, Bike, Flag, Star, Utensils, ShieldCheck, Activity, RefreshCw, Scale, Info, Facebook, MessageCircle, AtSign, Play, Pause, Volume2 } from 'https://esm.sh/lucide-react@0.263.1?deps=react@18.2.0';
+
+    // --- 模擬圖庫連結 (Unsplash) ---
+    const IMAGES = {
+      hero: "https://images.unsplash.com/photo-1542255476-b6058fb6fb46?q=80&w=1920&auto=format&fit=crop",
+      arch: "https://images.unsplash.com/photo-1470723710355-95304d8aece4?q=80&w=1920&auto=format&fit=crop",
+      traffic_jam: "https://images.unsplash.com/photo-1566847438217-76e82d383f84?q=80&w=1000&auto=format&fit=crop",
+      traffic_smooth: "https://images.unsplash.com/photo-1495539406979-bf61750d38ad?q=80&w=1000&auto=format&fit=crop",
+      tamsui: "https://images.unsplash.com/photo-1627917245607-2c902262d088?q=80&w=1000&auto=format&fit=crop",
+      bali: "https://images.unsplash.com/photo-1518998053980-fa646e740e6b?q=80&w=1000&auto=format&fit=crop",
+      future: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?q=80&w=1920&auto=format&fit=crop",
+    };
+
+    // --- 共用元件：夢幻漸層按鈕 ---
+    const GradientButton = ({ children, onClick, className = "" }) => (
+      <button 
+        onClick={onClick}
+        className={`group relative px-8 py-4 bg-gradient-to-r from-orange-400 to-pink-500 text-white font-bold rounded-full shadow-lg shadow-orange-200 hover:shadow-orange-300 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden ${className}`}
+      >
+        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-full"></div>
+        <span className="relative flex items-center gap-2 justify-center">
+          {children}
+        </span>
+      </button>
+    );
+
+    // --- 共用元件：柔和閱讀卡片 ---
+    const StoryCard = ({ title, subtitle, content, children, className="" }) => {
+      const [isExpanded, setIsExpanded] = useState(false);
+
+      return (
+        <div className={`bg-white/80 backdrop-blur-md border border-white/50 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.05)] rounded-[2rem] transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] relative overflow-hidden group ${className}`}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-100 to-pink-100 rounded-bl-[4rem] -z-10 opacity-50 group-hover:scale-110 transition-transform duration-700"></div>
+          
+          <h3 className="text-3xl font-serif font-bold text-slate-800 mb-3 leading-tight">
+            {title}
+          </h3>
+          <p className="text-orange-600 font-medium mb-6 tracking-wide text-lg border-b-2 border-orange-100 pb-4 inline-block">
+            {subtitle}
+          </p>
+
+          <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isExpanded ? 'max-h-[2500px] opacity-100' : 'max-h-32 opacity-80'}`}>
+             <div className="text-slate-600 font-light leading-relaxed space-y-4 text-justify text-lg">
+                {content}
+             </div>
+             {isExpanded && <div className="mt-8 pt-6 border-t border-orange-100 animate-fade-in">{children}</div>}
+          </div>
+
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-6 flex items-center gap-2 text-slate-500 font-bold hover:text-orange-500 transition-colors text-sm group-hover:translate-x-1 duration-300"
+          >
+            {isExpanded ? (
+              <React.Fragment><Minus size={18} /> 收合故事 (Close)</React.Fragment>
+            ) : (
+              <React.Fragment><Plus size={18} /> 閱讀完整故事 (Read More)</React.Fragment>
+            )}
+          </button>
+        </div>
+      );
+    };
+
+    // --- 元件：章節標籤 ---
+    const SectionBadge = ({ zh, en }) => (
+      <div className="inline-flex items-center gap-2 py-2 px-5 bg-sky-50 text-sky-800 rounded-full mb-8 border border-sky-100 shadow-sm">
+        <span className="font-bold tracking-widest text-sm">{zh}</span>
+        <span className="w-1 h-1 rounded-full bg-sky-300"></span>
+        <span className="text-xs uppercase tracking-wider opacity-70 font-sans">{en}</span>
+      </div>
+    );
+
+    // --- 元件：科普小卡 ---
+    const TechCard = ({ icon, title, text, highlight }) => (
+      <div className="bg-white/60 backdrop-blur border border-white/60 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex flex-col h-full">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 bg-gradient-to-br from-slate-800 to-slate-600 text-white rounded-lg shadow-md shrink-0">
+            {icon}
+          </div>
+          <h4 className="font-bold text-slate-800 text-lg">{title}</h4>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed font-light flex-grow">
+          {text}
+        </p>
+        {highlight && <div className="mt-3 pt-2 border-t border-slate-200 text-xs font-bold text-orange-500 flex items-center gap-1"><Activity size={12}/> {highlight}</div>}
+      </div>
+    );
+
+    // --- 元件：頁首免責聲明 ---
+    const TopDisclaimer = () => (
+      <div className="fixed top-0 left-0 w-full z-50 bg-slate-900/80 backdrop-blur-sm text-slate-200 text-[10px] md:text-xs py-2 px-4 text-center border-b border-white/10 tracking-wide font-light">
+        <div className="flex items-center justify-center gap-2">
+          <Info size={14} className="text-orange-400" />
+          <span>
+            <strong className="text-white">非官方網站聲明</strong> | 
+            本站為 <strong>HSUAN~</strong> 個人練習作品，內容蒐集自網路公開資訊 (更新至 2025.11.28)。實際活動請依官方公告為準。
+          </span>
+        </div>
+      </div>
+    );
+
+    // --- 元件：極簡頁尾 (含社群連結) ---
+    const MinimalFooter = () => (
+      <footer className="bg-slate-900 text-slate-500 py-16 px-6 border-t border-slate-800 text-center">
+        <div className="max-w-md mx-auto space-y-8">
+          
+          {/* 社群連結區 */}
+          <div className="flex justify-center items-center gap-6">
+            {/* Facebook */}
+            <a href="#" target="_blank" className="group p-3 rounded-full bg-slate-800 hover:bg-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.4)] transition-all duration-300 transform hover:-translate-y-1">
+               <Facebook size={20} className="text-slate-400 group-hover:text-white transition-colors" />
+            </a>
+            
+            {/* Line (使用 SVG 繪製) */}
+            <a href="#" target="_blank" className="group p-3 rounded-full bg-slate-800 hover:bg-[#00C300] hover:shadow-[0_0_15px_rgba(0,195,0,0.4)] transition-all duration-300 transform hover:-translate-y-1">
+               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" className="text-slate-400 group-hover:text-white transition-colors" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M20.6 10c0-4.4-4.3-8-9.6-8s-9.6 3.6-9.6 8c0 3.9 3.4 7.1 8 7.8.3.1.7.2.8.6.1.4 0 .9-.1 1.4-.2.9-.8 2.3-.9 2.5-.1.2-.1.5.1.7.2.2.5.2.7.1 3-1.6 5.9-4.3 6.9-6 1.8-1.7 2.7-3.6 2.7-5.1z"/>
+               </svg>
+            </a>
+
+            {/* Threads (使用 SVG 繪製) */}
+            <a href="#" target="_blank" className="group p-3 rounded-full bg-slate-800 hover:bg-black hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:border-slate-600 border border-transparent transition-all duration-300 transform hover:-translate-y-1">
+               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-white transition-colors">
+                 <path d="M19 12a7 7 0 1 1-7-7c2.5 0 4.8 1.3 6 3.5" />
+                 <path d="M12 12a3 3 0 1 0 3 3" />
+                 <path d="M21.5 12v-1.5a2.5 2.5 0 0 0-5 0v1.5" />
+               </svg>
+            </a>
+          </div>
+
+          {/* 極細分隔線 */}
+          <div className="w-12 h-px bg-slate-700 mx-auto"></div>
+          
+          {/* 署名區 */}
+          <div className="flex items-center justify-center gap-3 text-sm md:text-base tracking-widest font-light">
+            <span className="text-orange-200 font-bold drop-shadow-sm">HSUAN~</span>
+            <span className="text-slate-600">×</span>
+            <span className="text-slate-400">Gemini 3 Pro</span>
+          </div>
+          
+          {/* 版權宣告 */}
+          <div className="space-y-1">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-600">
+              © 2025 Eye of Tamsui. Personal Project.
+            </p>
+            <p className="text-[10px] text-slate-700 tracking-wider">
+              淡江之眼・明日海灣 | 個人練習作品
+            </p>
+          </div>
+
+        </div>
+      </footer>
+    );
+
+    // --- 元件：主題曲專區 (Theme Song) ---
+    const ThemeSongSection = () => {
+      const [isPlaying, setIsPlaying] = useState(false);
+
+      return (
+        <div className="py-20 bg-slate-900 text-white relative overflow-hidden">
+          {/* 背景裝飾 */}
+          <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1514525253440-b393452e3383?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-transparent"></div>
+
+          <div className="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
+            {/* 左側：文案 */}
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 text-orange-400 border border-orange-400/30 px-3 py-1 rounded-full text-xs tracking-widest uppercase">
+                <Music size={14} /> Official Theme Song
+              </div>
+              <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">
+                聽見淡江的聲音<br/>
+                <span className="text-slate-400 text-2xl md:text-3xl mt-2 block font-sans font-light">譜寫跨越百年的旋律</span>
+              </h2>
+              <p className="text-slate-300 font-light leading-relaxed">
+                這是一首獻給淡江大橋的歌。閉上眼睛，隨著旋律感受海風的吹拂、鋼索的振動，以及我們對這座橋樑的深厚情感。
+              </p>
+            </div>
+
+            {/* 右側：模擬影音播放器 */}
+            <div className="relative group">
+              <div className="aspect-video bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden relative flex flex-col items-center justify-center group-hover:shadow-orange-500/20 transition-all duration-500">
+                <img 
+                  src="https://images.unsplash.com/photo-1470723710355-95304d8aece4?q=80&w=800&auto=format&fit=crop" 
+                  alt="Music Cover" 
+                  className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] ${isPlaying ? 'scale-110' : 'scale-100'} opacity-60`}
+                />
+                <button 
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="z-20 w-20 h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:scale-110 hover:bg-orange-500 hover:border-transparent transition-all duration-300 group"
+                >
+                  {isPlaying ? <Pause size={32} fill="white" className="text-white"/> : <Play size={32} fill="white" className="text-white ml-1"/>}
+                </button>
+                {isPlaying && (
+                  <div className="absolute bottom-0 left-0 w-full h-1/3 flex items-end justify-center gap-1 pb-4 px-4 opacity-50">
+                     {[...Array(20)].map((_, i) => (
+                       <div key={i} className="w-2 bg-orange-400 animate-bounce" style={{ height: `${Math.random() * 100}%`, animationDuration: `${0.5 + Math.random()}s` }}></div>
+                     ))}
+                  </div>
+                )}
+                <div className="absolute bottom-4 left-6 text-white z-20">
+                   <h3 className="font-bold text-lg drop-shadow-md">淡江之歌 (Demo)</h3>
+                   <p className="text-xs opacity-80">Original Composition</p>
+                </div>
+              </div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500 -z-10"></div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- 第一幕：首頁 ---
+    const HeroSection = () => (
+        <div className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-gradient-to-b from-sky-200 via-orange-100 to-white">
+          <div className="absolute inset-0 bg-cover bg-center z-0 animate-slow-zoom opacity-90 mix-blend-overlay" style={{ backgroundImage: `url(${IMAGES.hero})` }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-orange-50/90 via-white/20 to-sky-100/30"></div>
+          <div className="relative z-10 w-full max-w-6xl px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-8 items-end h-full pb-32">
+            <div className="md:col-span-8">
+              <SectionBadge zh="第一幕：震撼與實現" en="Act 1: Impact" />
+              <h1 className="text-6xl md:text-8xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-800 to-slate-600 mb-6 leading-none drop-shadow-sm">苦守寒窯 30 年，<br/>終於等到你！</h1>
+              <div className="h-1.5 w-32 bg-gradient-to-r from-orange-400 to-pink-500 rounded-full mb-8 shadow-sm"></div>
+              <div className="bg-white/60 backdrop-blur-md border border-white/60 p-8 md:max-w-2xl rounded-[2rem] shadow-xl">
+                 <p className="text-xl md:text-2xl text-slate-700 font-light leading-relaxed">全球最威的跨海大橋，2026 直接降落在家門口！<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-pink-600 font-bold block mt-3 text-2xl">這不只是一座橋，這是台灣驕傲的「新國門」！🇹🇼✨</span></p>
+              </div>
+            </div>
+            <div className="md:col-span-4 flex justify-end items-end">
+               <GradientButton onClick={() => document.getElementById('theme-song').scrollIntoView({ behavior: 'smooth' })}>👉 點我看它有多厲害 <span className="text-xs opacity-80 font-normal">(Explore)</span></GradientButton>
+            </div>
+          </div>
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-400 animate-bounce flex flex-col items-center">
+             <span className="text-xs tracking-[0.2em] mb-2 font-medium">向下滑動 (SCROLL)</span>
+             <ChevronDown size={24} className="text-orange-400" />
+          </div>
+        </div>
+    );
+
+    // --- 第二幕：建築美學 ---
+    const ArchitectureSection = () => {
+      const [height, setHeight] = useState(0);
+      const sectionRef = useRef(null);
+      useEffect(() => {
+        const handleScroll = () => { if (sectionRef.current) { const rect = sectionRef.current.getBoundingClientRect(); const isVisible = rect.top < window.innerHeight && rect.bottom > 0; if (isVisible) setHeight(Math.min(100, Math.max(0, (window.innerHeight - rect.top) / window.innerHeight * 100))); } };
+        window.addEventListener('scroll', handleScroll); return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+      return (
+        <div id="architecture" ref={sectionRef} className="min-h-screen bg-gradient-to-b from-white to-sky-50 relative flex items-center py-24">
+          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative z-10">
+               <SectionBadge zh="第二幕：建築美學" en="Act 2: Architecture" />
+               <StoryCard title="阿娘喂！這座橋怎麼只有一根柱子？💃" subtitle="嘿！你有沒有發現，隔壁的橋都有好幾根腳，為什麼淡江大橋只有一根？" content={<><p>這可不是偷工減料，這是有大學問的！這位設計師可是建築界的「女神」Zaha Hadid (扎哈·哈蒂)！</p><br/><h4 className="font-bold text-sky-700 block mb-1 flex items-center gap-2"><Sun size={18} className="text-orange-400"/> 為了你的夕陽：</h4><p>她說：「橋不能擋住全世界最美的淡水夕照！」所以，她大膽拿掉多餘的橋塔，留下這座全球最長的「單塔不對稱斜張橋」。</p><br/><h4 className="font-bold text-sky-700 block mb-1 flex items-center gap-2"><Wind size={18} className="text-sky-400"/> 她在跳舞：</h4><p>仔細看那根主塔，像不像雙手合十祈禱？🙏 又像一個舞者在海上旋轉？這就是國際級的藝術品。</p><div className="mt-8 pt-8 border-t border-slate-100"><h4 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">🛠️ 硬核科普：鋼鐵巨獸的秘密</h4><div className="grid grid-cols-1 md:grid-cols-2 gap-4"><TechCard icon={<ShieldCheck size={20}/>} title="120年 重裝鎧甲" text="比照國際標準，針對淡水河口潮濕海風，打造「120年不壞之身」的超強耐久度。"/><TechCard icon={<Scale size={20}/>} title="400噸 巨型鋼梁" text="主跨徑達 450公尺！每節鋼梁重達 400噸以上，相當於一架波音747飛機的重量。"/><TechCard icon={<RefreshCw size={20}/>} title="鋼索可抽換" text="獨家四重防護！維修不中斷，同側兩條鋼索可同步更換，安全有保障。"/><TechCard icon={<Activity size={20}/>} title="24h 健康手環" text="全橋佈設 145 組監測設備，透過光纖監控風速、溫度、索力，異常秒知道。" highlight="#全年無休自動監測"/></div></div></>}>
+                  <div className="bg-sky-50 p-4 rounded-xl border border-sky-100 text-sm text-sky-800 flex items-center gap-3 shadow-sm"><div className="p-2 bg-sky-200 rounded-full text-sky-700"><ArrowRight size={16}/></div><span><strong>互動小機關 (Interactive)：</strong> 請看向右側，滑動畫面看主塔「長高」！</span></div>
+               </StoryCard>
+            </div>
+            <div className="relative h-[800px] bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-sky-100/50 border border-white/50 flex flex-col items-center justify-end p-10">
+               <div className="absolute inset-0 bg-gradient-to-t from-sky-100 via-white to-orange-50 opacity-60"></div>
+               <div className="absolute top-8 right-8 px-4 py-2 bg-white/80 backdrop-blur rounded-full text-xs font-bold text-slate-400 tracking-widest shadow-sm">高度比一比 (HEIGHT CHART)</div>
+               <div className="flex items-end justify-center gap-8 w-full h-full relative z-10 pb-4">
+                  <div className="flex flex-col items-center group"><div className="h-10 w-6 bg-emerald-200 rounded-t-lg shadow-sm"></div><span className="text-xs text-slate-400 mt-3 font-medium">公車</span></div>
+                  <div className="flex flex-col items-center group"><div className="h-32 w-10 bg-purple-200 rounded-t-full shadow-sm"></div><span className="text-xs text-slate-400 mt-3 font-medium">摩天輪</span></div>
+                  <div className="flex flex-col items-center relative">
+                     <div className="w-16 bg-gradient-to-t from-orange-400 to-pink-400 rounded-t-full relative transition-all duration-500 shadow-xl shadow-orange-200" style={{ height: `${Math.min(height * 4, 450)}px`, maxHeight: '450px', width: '30px' }}><div className="absolute inset-0 bg-white/20 rounded-t-full transform scale-x-50 origin-left"></div>{height > 20 && <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-xs px-4 py-2 rounded-full shadow-lg whitespace-nowrap animate-fade-in z-20">主塔 211m <span className="text-orange-300 font-bold ml-1">New!</span></div>}</div><span className="text-lg font-bold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">淡江大橋</span>
+                  </div>
+                  <div className="flex flex-col items-center group opacity-30"><div className="h-[500px] w-12 bg-slate-200 rounded-t-sm"></div><span className="text-xs text-slate-400 mt-3 font-medium">101大樓</span></div>
+               </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- 第三幕：交通革命 ---
+    const TrafficSection = () => {
+      const [isJam, setIsJam] = useState(true);
+      return (
+        <div className="py-32 bg-slate-50 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 relative z-10">
+            <div className="lg:col-span-7">
+               <div className="flex items-center justify-center gap-6 mb-10 bg-white p-2 rounded-full shadow-sm border border-slate-100 inline-flex mx-auto lg:mx-0">
+                  <button onClick={() => setIsJam(true)} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${isJam ? 'bg-rose-100 text-rose-600 shadow-inner' : 'text-slate-400 hover:text-slate-600'}`}>過去 (Past)</button>
+                  <div className="w-px h-6 bg-slate-200"></div>
+                  <button onClick={() => setIsJam(false)} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${!isJam ? 'bg-emerald-100 text-emerald-600 shadow-inner' : 'text-slate-400 hover:text-slate-600'}`}>未來 (Future)</button>
+               </div>
+               <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgb(0,0,0,0.1)] group border-4 border-white">
+                  <img src={isJam ? IMAGES.traffic_jam : IMAGES.traffic_smooth} className="w-full h-full object-cover transition-opacity duration-700 ease-in-out" alt="Traffic" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent flex items-end p-8">
+                     <div className="bg-white/95 backdrop-blur-sm p-6 rounded-3xl shadow-lg flex items-center gap-6 w-full max-w-md">
+                        <div className={`p-4 rounded-full ${isJam ? 'bg-rose-100 text-rose-500' : 'bg-emerald-100 text-emerald-500'}`}>{isJam ? <X size={28} strokeWidth={3}/> : <ArrowRight size={28} strokeWidth={3}/>}</div>
+                        <div><h4 className="text-slate-800 font-bold text-xl mb-1">{isJam ? '關渡大橋車陣 (Traffic Jam)' : '淡江大橋順暢圖 (Smooth)'}</h4><span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${isJam ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'}`}>{isJam ? '時間損失 (Loss): ∞' : '節省時間 (Saved): 30 min'}</span></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div className="lg:col-span-5 flex flex-col justify-center">
+              <SectionBadge zh="第三幕：交通革命" en="Act 3: Revolution" />
+               <StoryCard title="以後去淡水，不再卡在橋上懷疑人生！🚗💨" subtitle="還記得那些年，在關渡大橋上盯著紅色車尾燈，塞到天荒地老、想尿尿沒地方去的恐懼嗎？" content={<><p className="italic text-slate-400 mb-4 text-sm">(拍肩) 沒事了，那些都將成為歷史！</p><div className="space-y-6"><div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 hover:bg-emerald-50 transition-colors"><h4 className="font-bold text-emerald-800 block mb-2 text-lg">✨ 省下 30 分鐘的救贖：</h4><p className="text-sm">2026 通車後，淡水到八里「咻」一下就到！把時間拿去喝咖啡多好？</p></div><h4 className="font-bold text-slate-700 mt-4 text-lg border-l-4 border-orange-400 pl-3">大家都能走，才是真的狂：</h4><ul className="space-y-3"><li className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm"><span className="bg-orange-100 p-2 rounded-lg text-orange-600">🚘</span><span className="text-slate-600"><strong>開車族：</strong> 一路順暢不卡卡。</span></li><li className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm"><span className="bg-sky-100 p-2 rounded-lg text-sky-600">🏍️</span><span className="text-slate-600"><strong>騎士族：</strong> 專屬機車道，安全感 Max。</span></li><li className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm"><span className="bg-purple-100 p-2 rounded-lg text-purple-600">🚈</span><span className="text-slate-600"><strong>未來輕軌：</strong> 預留軌道，捷運過河。</span></li></ul></div></>}>
+                  <div className="mt-4 p-4 bg-slate-100 rounded-xl border border-slate-200 text-center"><p className="text-xs text-slate-500 font-medium">👈 左側畫面可點擊切換 "過去" 與 "未來" (Interactive View)</p></div>
+               </StoryCard>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- 第四幕：人文深度 ---
+    const CultureSection = () => {
+      const [activeTab, setActiveTab] = useState('tamsui');
+      return (
+        <div className="py-24 bg-gradient-to-b from-orange-50 to-white relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-12"><SectionBadge zh="第四幕：人文深度" en="Act 4: Culture" /><h2 className="text-4xl font-serif font-bold text-slate-800">穿越時空的藏寶圖 🗺️</h2></div>
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] rounded-[3rem] overflow-hidden min-h-[600px] bg-white border border-white/50">
+               <div className="relative group overflow-hidden">
+                  <img src={activeTab === 'tamsui' ? IMAGES.tamsui : IMAGES.bali} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" alt="Culture" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
+                  <div className="absolute bottom-8 left-8 right-8 bg-white/80 backdrop-blur-xl rounded-[2rem] p-2 flex shadow-xl border border-white/40">
+                     <button onClick={() => setActiveTab('tamsui')} className={`flex-1 py-4 text-sm font-bold tracking-wider transition-all rounded-[1.5rem] flex flex-col items-center ${activeTab === 'tamsui' ? 'bg-orange-500 text-white shadow-lg' : 'text-slate-500 hover:bg-white/50'}`}><span>1628 紅毛城</span><span className="text-[10px] opacity-80 mt-1 font-sans">Tamsui (Right Bank)</span></button>
+                     <button onClick={() => setActiveTab('bali')} className={`flex-1 py-4 text-sm font-bold tracking-wider transition-all rounded-[1.5rem] flex flex-col items-center ${activeTab === 'bali' ? 'bg-sky-600 text-white shadow-lg' : 'text-slate-500 hover:bg-white/50'}`}><span>史前 十三行</span><span className="text-[10px] opacity-80 mt-1 font-sans">Bali (Left Bank)</span></button>
+                  </div>
+               </div>
+               <div className="bg-white p-10 md:p-16 flex flex-col justify-center">
+                  {activeTab === 'tamsui' ? (
+                    <div className="animate-fade-in space-y-8">
+                       <div><span className="text-orange-500 font-bold tracking-widest text-xs uppercase mb-2 block">淡水右岸精選</span><h2 className="text-4xl font-serif font-bold text-slate-900 mb-2">左手摸古蹟 <span className="text-orange-400">🏰</span></h2><h3 className="text-xl text-slate-500 font-medium">紅毛城 & 秘境石滬</h3></div>
+                       <div className="prose text-slate-600 font-light leading-relaxed text-lg"><p className="mb-4">淡江大橋不只連通兩岸，更打通了三百年的歷史！別再只會逛老街，這裡有真正的「時光機」。</p><p>站在 <strong>紅毛城 (Fort San Domingo)</strong> 的紅磚牆前，你呼吸的是 400 年前的空氣。走下海灘，退潮時才會出現的 <strong>「心型石滬」</strong>，是老祖宗抓魚的智慧，也是現在內行人的告白秘境！💘</p></div>
+                       <div className="flex gap-4"><span className="px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-bold border border-orange-100">#阿給 (Ah-Gei)</span><span className="px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-bold border border-orange-100">#夕陽 (Sunset)</span></div>
+                    </div>
+                  ) : (
+                    <div className="animate-fade-in space-y-8">
+                       <div><span className="text-sky-500 font-bold tracking-widest text-xs uppercase mb-2 block">八里左岸精選</span><h2 className="text-4xl font-serif font-bold text-slate-900 mb-2">右手拍美照 <span className="text-sky-400">📸</span></h2><h3 className="text-xl text-slate-500 font-medium">十三行博物館 & 考古大冒險</h3></div>
+                       <div className="prose text-slate-600 font-light leading-relaxed text-lg"><p className="mb-4">過個橋，馬上進入史前時代！<strong>十三行博物館</strong> 的歪歪建築超好拍（IG 必打卡），看看千年前的人怎麼生活。</p><p>傍晚再去 <strong>左岸公園</strong> 吃現炸雙胞胎、孔雀蛤，騎著單車吹海風，這才叫深度旅遊！</p></div>
+                       <div className="flex gap-4"><span className="px-4 py-2 bg-sky-50 text-sky-600 rounded-full text-sm font-bold border border-sky-100">#博物館 (Museum)</span><span className="px-4 py-2 bg-sky-50 text-sky-600 rounded-full text-sm font-bold border border-sky-100">#單車 (Cycling)</span></div>
+                    </div>
+                  )}
+               </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- 特別企劃：通車嘉年華 (時間軸版) ---
+    const OpeningSection = () => {
+      const events = [
+        { date: "4/18", day: "週六", title: "公路局路跑活動", icon: <Flag size={18}/>, color: "bg-pink-500", desc: "率先在橋上奔跑，用腳步丈量世界地標！" },
+        { date: "4/19", day: "週日", title: "公路局自行車活動", icon: <Bike size={18}/>, color: "bg-sky-500", desc: "乘風騎行，享受淡水河口最美海景。" },
+        { date: "4/26", day: "週日", title: "公路局開幕大遊行", icon: <Star size={18}/>, color: "bg-amber-500", desc: "全台最熱鬧的嘉年華，見證歷史時刻。" },
+        { date: "5/02", day: "週六", title: "公路局星空音樂會", icon: <Music size={18}/>, color: "bg-purple-500", desc: "在橋畔與星空下，聆聽最動人的樂章。" },
+        { date: "5/03", day: "週日", title: "我和大橋在一起", icon: <Sun size={18}/>, color: "bg-teal-500", desc: "老少咸宜，適合全家大小的親子活動。" },
+        { date: "5/09", day: "週六", title: "通車典禮 (BIG DAY!)", icon: <MapPin size={18}/>, color: "bg-slate-800", desc: "正式通車！淡水八里生活圈邁入新紀元。", highlight: true }
+      ];
+
+      return (
+        <div className="py-24 bg-sky-50 relative overflow-hidden">
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 py-2 px-5 bg-white text-sky-800 rounded-full mb-6 border border-sky-100 shadow-sm"><span className="font-bold tracking-widest text-sm">特別企劃：通車嘉年華</span></div>
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-6">2026 倒數計時 ⏳</h2>
+              <p className="text-slate-500">一系列暖身活動，邀請您一起迎接淡江大橋完工的光榮時刻！</p>
+            </div>
+            <div className="relative">
+              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-sky-200 via-orange-200 to-sky-200 -translate-x-1/2"></div>
+              <div className="space-y-12">
+                {events.map((event, idx) => (
+                  <div key={idx} className={`relative flex items-center md:justify-between ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                    <div className="absolute left-8 md:left-1/2 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-white border-4 border-white shadow-md z-10"><div className={`w-3 h-3 rounded-full ${event.color}`}></div></div>
+                    <div className="ml-20 md:ml-0 md:w-[45%] group">
+                       <div className={`bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative ${event.highlight ? 'ring-2 ring-orange-400' : ''}`}>
+                          <div className={`hidden md:block absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-b border-l border-slate-100 transform rotate-45 ${idx % 2 === 0 ? '-left-2' : '-right-2'}`}></div>
+                          <div className="flex items-center justify-between mb-2"><div className={`text-white text-xs font-bold px-3 py-1 rounded-full ${event.color} flex items-center gap-1`}>{event.icon} {event.date}</div><span className="text-slate-400 text-sm font-medium">{event.day}</span></div>
+                          <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-orange-500 transition-colors">{event.title}</h3>
+                          <p className="text-sm text-slate-500 leading-relaxed">{event.desc}</p>
+                       </div>
+                    </div>
+                    <div className="hidden md:block md:w-[45%]"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-16 text-center"><p className="text-xs text-slate-400 bg-white/50 inline-block px-4 py-2 rounded-lg border border-slate-200">*活動日期與內容依主辦單位最終公告為準</p></div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- 第五幕：未來願景 ---
+    const FutureSection = () => {
+      const [dreams, setDreams] = useState([]);
+      const addDream = (icon, name) => { const newDream = { id: Date.now(), icon, name, left: Math.random() * 80 + 10, top: Math.random() * 50 + 10 }; setDreams([...dreams, newDream]); };
+      return (
+        <div className="min-h-screen relative bg-gradient-to-br from-indigo-900 to-purple-900 text-white overflow-hidden py-24">
+          <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay" style={{ backgroundImage: `url(${IMAGES.future})` }}></div>
+          <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
+            <div className="order-2 lg:order-1">
+               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[2.5rem] p-2 shadow-2xl h-[700px] flex flex-col relative overflow-hidden">
+                  <div className="absolute top-4 left-6 text-xs text-white/50 font-bold tracking-widest uppercase z-20 border border-white/20 px-3 py-1 rounded-full">Interactive Canvas</div>
+                  <div className="bg-gradient-to-b from-slate-900/50 to-indigo-900/50 flex-grow relative overflow-hidden rounded-[2rem] border border-white/10">
+                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">{dreams.length === 0 && (<div className="text-center opacity-40"><span className="text-6xl block mb-4 animate-bounce">🏗️</span><p className="tracking-widest font-light text-sm">點擊下方按鈕，構建未來藍圖<br/><span className="text-[10px] font-sans">(Click buttons below to build)</span></p></div>)}</div>
+                     {dreams.map(dream => (<div key={dream.id} className="absolute text-6xl animate-float drop-shadow-[0_0_25px_rgba(255,255,255,0.6)]" style={{ left: `${dream.left}%`, top: `${dream.top}%` }}>{dream.icon}</div>))}
+                  </div>
+                  <div className="p-6 grid grid-cols-5 gap-4">
+                     {[{icon: '🎡', label: '娛樂城', sub: 'Fun'},{icon: '🛥️', label: '遊艇', sub: 'Yacht'},{icon: '🏨', label: '飯店', sub: 'Hotel'},{icon: '🎆', label: '煙火', sub: 'Fireworks'},{icon: '🧺', label: '野餐', sub: 'Picnic'}].map((item, idx) => (<button key={idx} onClick={() => addDream(item.icon, item.label)} className="flex flex-col items-center gap-2 bg-white/5 hover:bg-white/20 p-3 rounded-2xl transition-all duration-300 group border border-white/5"><span className="text-2xl group-hover:scale-110 transition-transform drop-shadow-md">{item.icon}</span><span className="text-xs font-bold text-white/80">{item.label}</span><span className="text-[9px] text-white/40 uppercase font-sans tracking-wide md:block hidden">{item.sub}</span></button>))}
+                  </div>
+               </div>
+            </div>
+            <div className="order-1 lg:order-2 flex flex-col justify-center">
+               <SectionBadge zh="第五幕：未來願景" en="Act 5: Future Vision" />
+               <StoryCard title={<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-sky-200">下飛機直達天堂！遊艇、沙灘、Shopping Mall 一條龍！🥂</span>} subtitle="做夢都要笑醒！未來的淡海新市鎮與八里，將變身成「國際級度假勝地」。" content={
+                   <div className="text-slate-200"><p className="mb-4">無論你是外國遊客還是在地鄉親，這裡就是你的遊樂園！</p><div className="mb-6 p-6 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-[2rem] border border-orange-400/30 relative overflow-hidden"><div className="absolute top-0 right-0 p-4 opacity-10"><Utensils size={64} className="text-white" /></div><h3 className="text-xl font-bold text-orange-200 mb-2 flex items-center gap-2">🤫 有個大膽的想法... <span className="text-xs font-normal text-orange-300/70 uppercase tracking-wider">(A Bold Idea)</span></h3><h4 className="text-2xl font-bold text-white mb-4 drop-shadow-md">萬人橋上野餐派對！ <span className="text-sm font-normal opacity-80">(Mass Bridge Picnic)</span></h4><p className="text-slate-200 leading-relaxed mb-4 text-sm font-light">想像一下，把車子趕走，在世界最長的單塔斜張橋上鋪滿野餐墊。帶上你的阿給和雙胞胎，與一萬人在海上吹著海風、看著夕陽共進晚餐。這不僅是交通，更是全台最大的海上公園！</p><div className="flex gap-2"><span className="px-3 py-1 bg-white/10 text-orange-200 text-[10px] rounded-full font-bold border border-white/20">#構想中 (Concept)</span><span className="px-3 py-1 bg-white/10 text-orange-200 text-[10px] rounded-full font-bold border border-white/20">#許願 (Wishlist)</span></div></div><div className="grid gap-4"><div className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors"><h4 className="font-bold text-orange-300 block mb-1 text-lg flex items-center gap-2">✈️ 外國朋友看過來 <span className="text-xs text-white/50 font-normal uppercase">(Intl. Hub)</span></h4><p className="text-sm font-light text-slate-300">下飛機不用進台北市塞車！搭機場快線直達淡水，Long Stay 兩週。</p></div><div className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors"><h4 className="font-bold text-sky-300 block mb-1 text-lg flex items-center gap-2">🛥️ 海上派對 <span className="text-xs text-white/50 font-normal uppercase">(Yacht Party)</span></h4><p className="text-sm font-light text-slate-300">藍色公路再進化！想像一下，在遊艇上開趴、喝香檳，背景是絕美的大橋夕陽。</p></div><div className="grid grid-cols-2 gap-4"><div className="bg-white/5 p-4 rounded-2xl border border-white/10"><h4 className="font-bold text-pink-300 mb-1">🏖️ 沙崙 2.0</h4><p className="text-xs text-slate-400">海水浴場華麗重啟！</p></div><div className="bg-white/5 p-4 rounded-2xl border border-white/10"><h4 className="font-bold text-purple-300 mb-1">🎡 娛樂城</h4><p className="text-xs text-slate-400">飯店、影城、Outlet。</p></div></div></div></div>
+                 }
+               >
+                  <div className="mt-4 text-xs text-white/40 text-right font-sans">*示意內容，具體規劃以政府公告為準 (Concept art only)</div>
+               </StoryCard>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- 主程式 App ---
+    const App = () => {
+      return (
+        <div className="font-sans text-slate-800 bg-white selection:bg-orange-200 selection:text-orange-900">
+          <TopDisclaimer />
+          <HeroSection />
+          <ThemeSongSection />
+          <ArchitectureSection />
+          <TrafficSection />
+          <CultureSection />
+          <OpeningSection />
+          <FutureSection />
+          <MinimalFooter />
+        </div>
+      );
+    };
+
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

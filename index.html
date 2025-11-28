@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ChevronDown, Plus, Minus, X, Sun, Wind, Anchor, MapPin } from 'lucide-react';
+import { ArrowRight, ChevronDown, Plus, Minus, X, Sun, Wind, Anchor, MapPin, Calendar, Music, Bike, Flag, Star, Utensils, ShieldCheck, Activity, RefreshCw, Scale } from 'lucide-react';
 
 // --- 模擬圖庫連結 (Unsplash) ---
 const IMAGES = {
@@ -10,6 +10,7 @@ const IMAGES = {
   tamsui: "https://images.unsplash.com/photo-1627917245607-2c902262d088?q=80&w=1000&auto=format&fit=crop",
   bali: "https://images.unsplash.com/photo-1518998053980-fa646e740e6b?q=80&w=1000&auto=format&fit=crop",
   future: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?q=80&w=1920&auto=format&fit=crop",
+  event_bg: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop"
 };
 
 // --- 共用元件：夢幻漸層按鈕 ---
@@ -26,12 +27,11 @@ const GradientButton = ({ children, onClick, className = "" }) => (
 );
 
 // --- 共用元件：柔和閱讀卡片 (Soft Glass Card) ---
-const StoryCard = ({ title, subtitle, content, children }) => {
+const StoryCard = ({ title, subtitle, content, children, className="" }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-white/50 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.05)] rounded-[2rem] transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] relative overflow-hidden group">
-      {/* 裝飾性漸層光暈 */}
+    <div className={`bg-white/80 backdrop-blur-md border border-white/50 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.05)] rounded-[2rem] transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] relative overflow-hidden group ${className}`}>
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-100 to-pink-100 rounded-bl-[4rem] -z-10 opacity-50 group-hover:scale-110 transition-transform duration-700"></div>
       
       <h3 className="text-3xl font-serif font-bold text-slate-800 mb-3 leading-tight">
@@ -41,30 +41,28 @@ const StoryCard = ({ title, subtitle, content, children }) => {
         {subtitle}
       </p>
 
-      {/* 預設顯示的內容 (Hook) */}
-      <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isExpanded ? 'max-h-[1200px] opacity-100' : 'max-h-24 opacity-80'}`}>
+      <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isExpanded ? 'max-h-[1500px] opacity-100' : 'max-h-32 opacity-80'}`}>
          <div className="text-slate-600 font-light leading-relaxed space-y-4 text-justify text-lg">
             {content}
          </div>
          {isExpanded && <div className="mt-8 pt-6 border-t border-orange-100 animate-fade-in">{children}</div>}
       </div>
 
-      {/* 控制按鈕 */}
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
         className="mt-6 flex items-center gap-2 text-slate-500 font-bold hover:text-orange-500 transition-colors text-sm group-hover:translate-x-1 duration-300"
       >
         {isExpanded ? (
-          <><Minus size={18} /> 收合故事 (Close Story)</>
+          <><Minus size={18} /> 收合故事 (Close)</>
         ) : (
-          <><Plus size={18} /> 閱讀完整故事 (Read Full Story)</>
+          <><Plus size={18} /> 閱讀完整故事 (Read More)</>
         )}
       </button>
     </div>
   );
 };
 
-// --- 元件：章節標籤 (Pill Badge) ---
+// --- 元件：章節標籤 ---
 const SectionBadge = ({ zh, en }) => (
   <div className="inline-flex items-center gap-2 py-2 px-5 bg-sky-50 text-sky-800 rounded-full mb-8 border border-sky-100 shadow-sm">
     <span className="font-bold tracking-widest text-sm">{zh}</span>
@@ -73,28 +71,39 @@ const SectionBadge = ({ zh, en }) => (
   </div>
 );
 
+// --- 元件：科普小卡 (Tech Spec Card) ---
+const TechCard = ({ icon, title, text, highlight }) => (
+  <div className="bg-white/60 backdrop-blur border border-white/60 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+    <div className="flex items-center gap-3 mb-3">
+      <div className="p-2 bg-gradient-to-br from-slate-800 to-slate-600 text-white rounded-lg shadow-md">
+        {icon}
+      </div>
+      <h4 className="font-bold text-slate-800 text-lg">{title}</h4>
+    </div>
+    <p className="text-sm text-slate-600 leading-relaxed font-light">
+      {text}
+    </p>
+    {highlight && <div className="mt-2 text-xs font-bold text-orange-500">{highlight}</div>}
+  </div>
+);
+
 // --- 元件：第一幕 首頁 (Hero) ---
 const HeroSection = () => {
   return (
     <div className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-gradient-to-b from-sky-200 via-orange-100 to-white">
-      {/* 背景圖層 - 更加柔和 */}
       <div 
         className="absolute inset-0 bg-cover bg-center z-0 animate-slow-zoom opacity-90 mix-blend-overlay"
         style={{ backgroundImage: `url(${IMAGES.hero})` }}
       ></div>
-      {/* 疊加一層柔光漸層 */}
       <div className="absolute inset-0 bg-gradient-to-t from-orange-50/90 via-white/20 to-sky-100/30"></div>
       
       <div className="relative z-10 w-full max-w-6xl px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-8 items-end h-full pb-32">
         <div className="md:col-span-8">
           <SectionBadge zh="第一幕：震撼與實現" en="Act 1: Impact" />
-          
           <h1 className="text-6xl md:text-8xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-800 to-slate-600 mb-6 leading-none drop-shadow-sm">
             苦守寒窯 30 年，<br/>終於等到你！
           </h1>
-          
           <div className="h-1.5 w-32 bg-gradient-to-r from-orange-400 to-pink-500 rounded-full mb-8 shadow-sm"></div>
-          
           <div className="bg-white/60 backdrop-blur-md border border-white/60 p-8 md:max-w-2xl rounded-[2rem] shadow-xl">
              <p className="text-xl md:text-2xl text-slate-700 font-light leading-relaxed">
                全球最威的跨海大橋，2026 直接降落在家門口！<br/>
@@ -104,14 +113,12 @@ const HeroSection = () => {
              </p>
           </div>
         </div>
-
         <div className="md:col-span-4 flex justify-end items-end">
            <GradientButton onClick={() => document.getElementById('architecture').scrollIntoView({ behavior: 'smooth' })}>
               👉 點我看它有多厲害 <span className="text-xs opacity-80 font-normal">(Explore)</span>
            </GradientButton>
         </div>
       </div>
-      
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-400 animate-bounce flex flex-col items-center">
          <span className="text-xs tracking-[0.2em] mb-2 font-medium">向下滑動 (SCROLL)</span>
          <ChevronDown size={24} className="text-orange-400" />
@@ -145,11 +152,8 @@ const ArchitectureSection = () => {
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-orange-50 to-transparent opacity-50"></div>
       
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-        
-        {/* 左側：故事區 */}
         <div className="relative z-10">
            <SectionBadge zh="第二幕：建築美學" en="Act 2: Architecture" />
-           
            <StoryCard 
              title="阿娘喂！這座橋怎麼只有一根柱子？💃"
              subtitle="嘿！你有沒有發現，隔壁的橋都有好幾根腳，為什麼淡江大橋只有一根？"
@@ -162,10 +166,39 @@ const ArchitectureSection = () => {
                  <br/>
                  <h4 className="font-bold text-sky-700 block mb-1 flex items-center gap-2"><Wind size={18} className="text-sky-400"/> 她在跳舞：</h4>
                  <p>仔細看那根主塔，像不像雙手合十祈禱？🙏 又像一個舞者在海上旋轉？這就是國際級的藝術品。</p>
+                 
+                 {/* 新增科普小知識區塊 */}
+                 <div className="mt-8 pt-8 border-t border-slate-100">
+                    <h4 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                      🛠️ 硬核科普：鋼鐵巨獸的秘密
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <TechCard 
+                        icon={<ShieldCheck size={20}/>}
+                        title="120年 重裝鎧甲"
+                        text="比照國際標準，針對淡水河口潮濕海風，打造「120年不壞之身」的超強耐久度。"
+                      />
+                      <TechCard 
+                        icon={<Scale size={20}/>}
+                        title="400噸 巨型鋼梁"
+                        text="主跨徑達 450公尺！每節鋼梁重達 400噸以上，相當於一架波音747飛機的重量。"
+                      />
+                      <TechCard 
+                        icon={<RefreshCw size={20}/>}
+                        title="鋼索可抽換"
+                        text="獨家四重防護！維修不中斷，同側兩條鋼索可同步更換，安全有保障。"
+                      />
+                      <TechCard 
+                        icon={<Activity size={20}/>}
+                        title="24h 健康手環"
+                        text="全橋佈設 145 組監測設備，透過光纖監控風速、溫度、索力，異常秒知道。"
+                        highlight="#全年無休自動監測"
+                      />
+                    </div>
+                 </div>
                </>
              }
            >
-              {/* 互動提示 */}
               <div className="bg-sky-50 p-4 rounded-xl border border-sky-100 text-sm text-sky-800 flex items-center gap-3 shadow-sm">
                  <div className="p-2 bg-sky-200 rounded-full text-sky-700"><ArrowRight size={16}/></div>
                  <span><strong>互動小機關 (Interactive)：</strong> 請看向右側，滑動畫面看主塔「長高」！</span>
@@ -173,37 +206,28 @@ const ArchitectureSection = () => {
            </StoryCard>
         </div>
 
-        {/* 右側：互動視覺區 (粉嫩色調比較圖) */}
-        <div className="relative h-[650px] bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-sky-100/50 border border-white/50 flex flex-col items-center justify-end p-10">
-           {/* 輕柔背景 */}
+        <div className="relative h-[800px] bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-sky-100/50 border border-white/50 flex flex-col items-center justify-end p-10">
            <div className="absolute inset-0 bg-gradient-to-t from-sky-100 via-white to-orange-50 opacity-60"></div>
            <div className="absolute top-8 right-8 px-4 py-2 bg-white/80 backdrop-blur rounded-full text-xs font-bold text-slate-400 tracking-widest shadow-sm">
              高度比一比 (HEIGHT CHART)
            </div>
            
-           {/* 比較圖表 */}
            <div className="flex items-end justify-center gap-8 w-full h-full relative z-10 pb-4">
-              {/* 比較物件：公車 */}
               <div className="flex flex-col items-center group">
                  <div className="h-10 w-6 bg-emerald-200 rounded-t-lg shadow-sm"></div>
                  <span className="text-xs text-slate-400 mt-3 font-medium">公車</span>
               </div>
-              {/* 比較物件：摩天輪 */}
               <div className="flex flex-col items-center group">
                  <div className="h-32 w-10 bg-purple-200 rounded-t-full shadow-sm"></div>
                  <span className="text-xs text-slate-400 mt-3 font-medium">摩天輪</span>
               </div>
               
-              {/* 主角：淡江大橋 (流線型 & 漸層) */}
               <div className="flex flex-col items-center relative">
                  <div 
                     className="w-16 bg-gradient-to-t from-orange-400 to-pink-400 rounded-t-full relative transition-all duration-500 shadow-xl shadow-orange-200"
                     style={{ height: `${Math.min(height * 4, 450)}px`, maxHeight: '450px', width: '30px' }}
                  >
-                   {/* 曲線裝飾 */}
                    <div className="absolute inset-0 bg-white/20 rounded-t-full transform scale-x-50 origin-left"></div>
-                   
-                   {/* 標籤氣泡 */}
                    {height > 20 && (
                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-xs px-4 py-2 rounded-full shadow-lg whitespace-nowrap animate-fade-in z-20">
                        主塔 211m <span className="text-orange-300 font-bold ml-1">New!</span>
@@ -213,14 +237,12 @@ const ArchitectureSection = () => {
                  <span className="text-lg font-bold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">淡江大橋</span>
               </div>
 
-              {/* 比較物件：101 */}
               <div className="flex flex-col items-center group opacity-30">
                  <div className="h-[500px] w-12 bg-slate-200 rounded-t-sm"></div>
                  <span className="text-xs text-slate-400 mt-3 font-medium">101大樓</span>
               </div>
            </div>
         </div>
-
       </div>
     </div>
   );
@@ -232,15 +254,11 @@ const TrafficSection = () => {
 
   return (
     <div className="py-32 bg-slate-50 relative overflow-hidden">
-      {/* 裝飾背景圓 */}
       <div className="absolute -top-20 -right-20 w-96 h-96 bg-sky-100 rounded-full blur-3xl opacity-50"></div>
       <div className="absolute top-1/2 -left-20 w-80 h-80 bg-orange-100 rounded-full blur-3xl opacity-50"></div>
 
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 relative z-10">
-        
-        {/* 左側：互動視覺區 */}
         <div className="lg:col-span-7">
-           {/* 膠囊開關 Toggle (Bilingual) */}
            <div className="flex items-center justify-center gap-6 mb-10 bg-white p-2 rounded-full shadow-sm border border-slate-100 inline-flex mx-auto lg:mx-0">
               <button 
                 onClick={() => setIsJam(true)}
@@ -248,9 +266,7 @@ const TrafficSection = () => {
               >
                 過去 (Past)
               </button>
-              
               <div className="w-px h-6 bg-slate-200"></div>
-              
               <button 
                 onClick={() => setIsJam(false)}
                 className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${!isJam ? 'bg-emerald-100 text-emerald-600 shadow-inner' : 'text-slate-400 hover:text-slate-600'}`}
@@ -258,7 +274,6 @@ const TrafficSection = () => {
                 未來 (Future)
               </button>
            </div>
-
            <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgb(0,0,0,0.1)] group border-4 border-white">
               <img 
                  src={isJam ? IMAGES.traffic_jam : IMAGES.traffic_smooth} 
@@ -282,24 +297,19 @@ const TrafficSection = () => {
               </div>
            </div>
         </div>
-
-        {/* 右側：故事區 */}
         <div className="lg:col-span-5 flex flex-col justify-center">
           <SectionBadge zh="第三幕：交通革命" en="Act 3: Revolution" />
-           
            <StoryCard 
              title="以後去淡水，不再卡在橋上懷疑人生！🚗💨"
              subtitle="還記得那些年，在關渡大橋上盯著紅色車尾燈，塞到天荒地老、想尿尿沒地方去的恐懼嗎？"
              content={
                <>
                  <p className="italic text-slate-400 mb-4 text-sm">(拍肩) 沒事了，那些都將成為歷史！</p>
-                 
                  <div className="space-y-6">
                    <div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 hover:bg-emerald-50 transition-colors">
                      <h4 className="font-bold text-emerald-800 block mb-2 text-lg">✨ 省下 30 分鐘的救贖：</h4>
                      <p className="text-sm">2026 通車後，淡水到八里「咻」一下就到！把時間拿去喝咖啡多好？</p>
                    </div>
-
                    <h4 className="font-bold text-slate-700 mt-4 text-lg border-l-4 border-orange-400 pl-3">大家都能走，才是真的狂：</h4>
                    <ul className="space-y-3">
                      <li className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm">
@@ -319,13 +329,11 @@ const TrafficSection = () => {
                </>
              }
            >
-              {/* 延伸閱讀區塊 */}
               <div className="mt-4 p-4 bg-slate-100 rounded-xl border border-slate-200 text-center">
                 <p className="text-xs text-slate-500 font-medium">👈 左側畫面可點擊切換 "過去" 與 "未來" (Interactive View)</p>
               </div>
            </StoryCard>
         </div>
-
       </div>
     </div>
   );
@@ -344,9 +352,7 @@ const CultureSection = () => {
              穿越時空的藏寶圖 🗺️
            </h2>
         </div>
-
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] rounded-[3rem] overflow-hidden min-h-[600px] bg-white border border-white/50">
-           {/* 左側：互動羅盤與圖片 */}
            <div className="relative group overflow-hidden">
               <img 
                  src={activeTab === 'tamsui' ? IMAGES.tamsui : IMAGES.bali} 
@@ -354,8 +360,6 @@ const CultureSection = () => {
                  alt="Culture"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
-              
-              {/* 懸浮切換器 (極簡美學) */}
               <div className="absolute bottom-8 left-8 right-8 bg-white/80 backdrop-blur-xl rounded-[2rem] p-2 flex shadow-xl border border-white/40">
                  <button 
                    onClick={() => setActiveTab('tamsui')}
@@ -373,8 +377,6 @@ const CultureSection = () => {
                  </button>
               </div>
            </div>
-
-           {/* 右側：故事內容 (呼吸感排版) */}
            <div className="bg-white p-10 md:p-16 flex flex-col justify-center">
               {activeTab === 'tamsui' ? (
                 <div className="animate-fade-in space-y-8">
@@ -383,12 +385,10 @@ const CultureSection = () => {
                      <h2 className="text-4xl font-serif font-bold text-slate-900 mb-2">左手摸古蹟 <span className="text-orange-400">🏰</span></h2>
                      <h3 className="text-xl text-slate-500 font-medium">紅毛城 & 秘境石滬</h3>
                    </div>
-                   
                    <div className="prose text-slate-600 font-light leading-relaxed text-lg">
                      <p className="mb-4">淡江大橋不只連通兩岸，更打通了三百年的歷史！別再只會逛老街，這裡有真正的「時光機」。</p>
                      <p>站在 <strong>紅毛城 (Fort San Domingo)</strong> 的紅磚牆前，你呼吸的是 400 年前的空氣。走下海灘，退潮時才會出現的 <strong>「心型石滬」</strong>，是老祖宗抓魚的智慧，也是現在內行人的告白秘境！💘</p>
                    </div>
-                   
                    <div className="flex gap-4">
                       <span className="px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-bold border border-orange-100">#阿給 (Ah-Gei)</span>
                       <span className="px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-bold border border-orange-100">#夕陽 (Sunset)</span>
@@ -401,12 +401,10 @@ const CultureSection = () => {
                      <h2 className="text-4xl font-serif font-bold text-slate-900 mb-2">右手拍美照 <span className="text-sky-400">📸</span></h2>
                      <h3 className="text-xl text-slate-500 font-medium">十三行博物館 & 考古大冒險</h3>
                    </div>
-                   
                    <div className="prose text-slate-600 font-light leading-relaxed text-lg">
                      <p className="mb-4">過個橋，馬上進入史前時代！<strong>十三行博物館</strong> 的歪歪建築超好拍（IG 必打卡），看看千年前的人怎麼生活。</p>
                      <p>傍晚再去 <strong>左岸公園</strong> 吃現炸雙胞胎、孔雀蛤，騎著單車吹海風，這才叫深度旅遊！</p>
                    </div>
-
                    <div className="flex gap-4">
                       <span className="px-4 py-2 bg-sky-50 text-sky-600 rounded-full text-sm font-bold border border-sky-100">#博物館 (Museum)</span>
                       <span className="px-4 py-2 bg-sky-50 text-sky-600 rounded-full text-sm font-bold border border-sky-100">#單車 (Cycling)</span>
@@ -414,6 +412,65 @@ const CultureSection = () => {
                 </div>
               )}
            </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- 元件：特別企劃 通車嘉年華 (Opening Events) ---
+const OpeningSection = () => {
+  const events = [
+    { date: "4/18 (六)", title: "公路局路跑活動", icon: <Flag size={20} className="text-white"/>, color: "from-pink-400 to-rose-500", desc: "率先在橋上奔跑，用腳步丈量世界地標！" },
+    { date: "4/19 (日)", title: "公路局自行車活動", icon: <Bike size={20} className="text-white"/>, color: "from-sky-400 to-blue-500", desc: "乘風騎行，享受淡水河口最美海景。" },
+    { date: "4/26 (日)", title: "公路局開幕大遊行", icon: <Star size={20} className="text-white"/>, color: "from-amber-400 to-orange-500", desc: "全台最熱鬧的嘉年華，見證歷史時刻。" },
+    { date: "5/02 (六)", title: "公路局星空音樂會", icon: <Music size={20} className="text-white"/>, color: "from-purple-400 to-indigo-500", desc: "在橋畔與星空下，聆聽最動人的樂章。" },
+    { date: "5/03 (日)", title: "我和大橋在一起", icon: <Sun size={20} className="text-white"/>, color: "from-teal-400 to-emerald-500", desc: "老少咸宜，適合全家大小的親子活動。" },
+    { date: "5/09 (六)", title: "通車典禮", icon: <MapPin size={20} className="text-white"/>, color: "from-slate-700 to-black", desc: "正式通車！淡水八里生活圈邁入新紀元。", highlight: true }
+  ];
+
+  return (
+    <div className="py-24 bg-sky-50 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full bg-grid-slate-100/[0.05] -z-10"></div>
+      <div className="absolute -left-20 top-20 w-72 h-72 bg-pink-200 rounded-full blur-[80px] opacity-40"></div>
+      <div className="absolute -right-20 bottom-20 w-72 h-72 bg-blue-200 rounded-full blur-[80px] opacity-40"></div>
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <SectionBadge zh="特別企劃：通車嘉年華" en="Special: Opening Carnival" />
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-6">
+            2026 倒數計時！<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">精彩活動搶先看</span>
+          </h2>
+          <p className="text-slate-500 max-w-2xl mx-auto">
+            配合工程進度，公路局與新北市府聯手規劃一系列暖身活動。從路跑到音樂會，邀請您一起迎接淡江大橋完工的光榮時刻！
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event, idx) => (
+            <div key={idx} className={`group relative bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${event.highlight ? 'ring-2 ring-slate-900 ring-offset-2' : ''}`}>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-slate-400 font-mono font-bold tracking-wider text-sm border border-slate-200 px-3 py-1 rounded-full">{event.date}</span>
+                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
+                  {event.icon}
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-800 group-hover:to-slate-600 transition-colors">
+                {event.title}
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                {event.desc}
+              </p>
+              {event.highlight && (
+                <div className="absolute -top-3 -right-3 bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md animate-bounce">
+                  BIG DAY!
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 text-center">
+           <p className="text-xs text-slate-400 bg-white/50 inline-block px-4 py-2 rounded-lg border border-slate-200">
+             *活動日期與內容依主辦單位最終公告為準，更多在地優先與老少咸宜活動規劃中。
+           </p>
         </div>
       </div>
     </div>
@@ -431,24 +488,19 @@ const FutureSection = () => {
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-indigo-900 to-purple-900 text-white overflow-hidden py-24">
-      {/* 背景圖 (魔幻時刻) */}
       <div 
         className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay"
         style={{ backgroundImage: `url(${IMAGES.future})` }}
       ></div>
-      {/* 夢幻光暈 */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500 rounded-full blur-[100px] opacity-20"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500 rounded-full blur-[100px] opacity-20"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
-        
-        {/* 左側：夢想製造機 (Glassmorphism Canvas) */}
         <div className="order-2 lg:order-1">
-           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[2.5rem] p-2 shadow-2xl h-[650px] flex flex-col relative overflow-hidden">
+           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[2.5rem] p-2 shadow-2xl h-[700px] flex flex-col relative overflow-hidden">
               <div className="absolute top-4 left-6 text-xs text-white/50 font-bold tracking-widest uppercase z-20 border border-white/20 px-3 py-1 rounded-full">
                  Interactive Canvas
               </div>
-              
               <div className="bg-gradient-to-b from-slate-900/50 to-indigo-900/50 flex-grow relative overflow-hidden rounded-[2rem] border border-white/10">
                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     {dreams.length === 0 && (
@@ -468,59 +520,70 @@ const FutureSection = () => {
                    </div>
                  ))}
               </div>
-              
-              {/* 控制面板 */}
-              <div className="p-6 grid grid-cols-4 gap-4">
+              <div className="p-6 grid grid-cols-5 gap-4">
                  {[
                    {icon: '🎡', label: '娛樂城', sub: 'Fun'},
                    {icon: '🛥️', label: '遊艇', sub: 'Yacht'},
                    {icon: '🏨', label: '飯店', sub: 'Hotel'},
-                   {icon: '🎆', label: '煙火', sub: 'Fireworks'}
+                   {icon: '🎆', label: '煙火', sub: 'Fireworks'},
+                   {icon: '🧺', label: '野餐', sub: 'Picnic'}
                  ].map((item, idx) => (
                    <button 
                      key={idx} 
                      onClick={() => addDream(item.icon, item.label)}
                      className="flex flex-col items-center gap-2 bg-white/5 hover:bg-white/20 p-3 rounded-2xl transition-all duration-300 group border border-white/5"
                    >
-                     <span className="text-3xl group-hover:scale-110 transition-transform drop-shadow-md">{item.icon}</span>
+                     <span className="text-2xl group-hover:scale-110 transition-transform drop-shadow-md">{item.icon}</span>
                      <span className="text-xs font-bold text-white/80">{item.label}</span>
-                     <span className="text-[9px] text-white/40 uppercase font-sans tracking-wide">{item.sub}</span>
+                     <span className="text-[9px] text-white/40 uppercase font-sans tracking-wide md:block hidden">{item.sub}</span>
                    </button>
                  ))}
               </div>
            </div>
         </div>
-
-        {/* 右側：故事內容 */}
         <div className="order-1 lg:order-2 flex flex-col justify-center">
            <SectionBadge zh="第五幕：未來願景" en="Act 5: Future Vision" />
-           
            <StoryCard 
              title={<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-sky-200">下飛機直達天堂！遊艇、沙灘、Shopping Mall 一條龍！🥂</span>}
              subtitle="做夢都要笑醒！未來的淡海新市鎮與八里，將變身成「國際級度假勝地」。"
              content={
                <div className="text-slate-200">
                  <p className="mb-4">無論你是外國遊客還是在地鄉親，這裡就是你的遊樂園！</p>
-                 
-                 <div className="grid gap-6">
+                 <div className="mb-6 p-6 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-[2rem] border border-orange-400/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                       <Utensils size={64} className="text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-orange-200 mb-2 flex items-center gap-2">
+                      🤫 有個大膽的想法... <span className="text-xs font-normal text-orange-300/70 uppercase tracking-wider">(A Bold Idea)</span>
+                    </h3>
+                    <h4 className="text-2xl font-bold text-white mb-4 drop-shadow-md">
+                      萬人橋上野餐派對！ <span className="text-sm font-normal opacity-80">(Mass Bridge Picnic)</span>
+                    </h4>
+                    <p className="text-slate-200 leading-relaxed mb-4 text-sm font-light">
+                      想像一下，把車子趕走，在世界最長的單塔斜張橋上鋪滿野餐墊。帶上你的阿給和雙胞胎，與一萬人在海上吹著海風、看著夕陽共進晚餐。這不僅是交通，更是全台最大的海上公園！
+                    </p>
+                    <div className="flex gap-2">
+                       <span className="px-3 py-1 bg-white/10 text-orange-200 text-[10px] rounded-full font-bold border border-white/20">#構想中 (Concept)</span>
+                       <span className="px-3 py-1 bg-white/10 text-orange-200 text-[10px] rounded-full font-bold border border-white/20">#許願 (Wishlist)</span>
+                    </div>
+                 </div>
+                 <div className="grid gap-4">
                    <div className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                      <h4 className="font-bold text-orange-300 block mb-1 text-lg flex items-center gap-2">✈️ 外國朋友看過來 <span className="text-xs text-white/50 font-normal uppercase">(Intl. Hub)</span></h4>
-                     <p className="text-sm font-light text-slate-300">下飛機不用進台北市塞車！搭機場快線直達淡水，Long Stay 兩週，享受慢活台北。</p>
+                     <p className="text-sm font-light text-slate-300">下飛機不用進台北市塞車！搭機場快線直達淡水，Long Stay 兩週。</p>
                    </div>
-                   
                    <div className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                      <h4 className="font-bold text-sky-300 block mb-1 text-lg flex items-center gap-2">🛥️ 海上派對 <span className="text-xs text-white/50 font-normal uppercase">(Yacht Party)</span></h4>
                      <p className="text-sm font-light text-slate-300">藍色公路再進化！想像一下，在遊艇上開趴、喝香檳，背景是絕美的大橋夕陽。</p>
                    </div>
-                   
                    <div className="grid grid-cols-2 gap-4">
                       <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
                         <h4 className="font-bold text-pink-300 mb-1">🏖️ 沙崙 2.0</h4>
-                        <p className="text-xs text-slate-400">海水浴場華麗重啟，不用去墾丁！</p>
+                        <p className="text-xs text-slate-400">海水浴場華麗重啟！</p>
                       </div>
                       <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
                         <h4 className="font-bold text-purple-300 mb-1">🎡 娛樂城</h4>
-                        <p className="text-xs text-slate-400">飯店、影城、Outlet 一次滿足。</p>
+                        <p className="text-xs text-slate-400">飯店、影城、Outlet。</p>
                       </div>
                    </div>
                  </div>
@@ -532,7 +595,6 @@ const FutureSection = () => {
               </div>
            </StoryCard>
         </div>
-
       </div>
     </div>
   );
@@ -546,17 +608,15 @@ const App = () => {
       <ArchitectureSection />
       <TrafficSection />
       <CultureSection />
+      <OpeningSection />
       <FutureSection />
       
       <footer className="bg-slate-900 text-slate-400 text-center py-20 px-6 border-t border-slate-800 relative overflow-hidden">
-        {/* 底部光暈 */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-t from-sky-900/30 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-        
         <div className="max-w-md mx-auto relative z-10">
           <p className="text-[10px] uppercase tracking-[0.3em] mb-4 text-orange-500 font-bold">The Eye of Tamsui</p>
           <h2 className="font-serif text-3xl text-white mb-2 tracking-wide">淡江之眼・明日海灣</h2>
           <p className="text-xs font-light text-slate-500 mt-4">Designed for 2026 Grand Opening</p>
-          
           <div className="mt-8 flex justify-center gap-4 text-xs font-bold text-slate-600">
             <span>隱私權政策 (Privacy)</span>
             <span>•</span>
@@ -565,7 +625,6 @@ const App = () => {
         </div>
       </footer>
       
-      {/* 全域樣式補充：字體與動畫 */}
       <style>{`
         .font-serif { font-family: 'Times New Roman', serif; }
         @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

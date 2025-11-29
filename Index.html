@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>淡江大橋互動網頁｜v2.0 完整策展（全文版）</title>
+<meta name="description" content="老少咸宜、零等待載入的互動式策展網頁：完整收錄 v2.0 全文，含前世傳奇、力與美、交通升級、雙岸旅遊、未來願景、全民沙盒。">
+<meta name="theme-color" content="#ffb85c">
+<style>
+:root{
+  --bg:#fffaf3; --ink:#2b2b2b; --muted:#6b6b6b;
+  --brand:#ff8a00; --brand-2:#ffb85c; --accent:#1e88e5;
+  --ok:#1bb67a; --shadow:0 6px 20px rgba(0,0,0,.08);
+  --radius:16px; --maxw:1100px; --base:18.5px; --leading:1.75;
+}
+@media (min-width:1200px){ :root{ --base:19px; } }
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Noto Sans TC","PingFang TC","Microsoft JhengHei",Arial,sans-serif;
+  font-size:var(--base); line-height:var(--leading);}
+a{color:var(--accent)} img{max-width:100%;height:auto} button{font:inherit}
+header.site{position:sticky;top:0;z-index:9999;backdrop-filter:saturate(1.2) blur(8px);
+  background:linear-gradient(90deg,#fff8ec 0%, #fff 100% / .84); border-bottom:1px solid rgba(0,0,0,.06)}
+nav.wrap{max-width:var(--maxw);margin:auto;display:flex;gap:12px;align-items:center;padding:10px 14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.brand em{font-style:normal;background:linear-gradient(90deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .dot{width:14px;height:14px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 5px rgba(255,138,0,.15)}
+nav.wrap .sp{flex:1}
+.btn{border:none;border-radius:999px;padding:10px 16px;background:#111;color:#fff;box-shadow:var(--shadow);cursor:pointer}
+.btn--ghost{background:#fff;color:#111;border:1px solid rgba(0,0,0,.06)}
+main{max-width:var(--maxw);margin:16px auto;padding:0 14px 120px}
+section.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:18px 0}
+section.card h2{margin:0 0 10px 0;font-size:1.35rem}
+section.card h3{margin:16px 0 8px 0;font-size:1.15rem}
+small.note{color:var(--muted)}
+/* hero (same as lightweight version) */
+.hero{position:relative;overflow:hidden;border-radius:20px;min-height:52vh;
+  background:radial-gradient(70% 60% at 50% 30%, #ffd9a6, #ffb86b 50%, #f39a4a 70%, #ed7c23 100%); color:#3a2100}
+.hero .sun{position:absolute;width:220px;height:220px;border-radius:50%;right:8%;top:10%;
+  background:radial-gradient(circle at 30% 30%, #fff6cc, #ffd36b 60%, #ffb54a)}
+.hero .mount{position:absolute;left:0;right:0;bottom:12%;height:180px;background:
+  radial-gradient(120% 100% at 20% 100%, #8c6b3f, transparent 60%),
+  radial-gradient(120% 120% at 70% 100%, #6b4b28, transparent 60%);opacity:.4}
+.hero .water{position:absolute;left:0;right:0;bottom:0;height:26%;background:
+  linear-gradient(#ffdfa8 0%, #ffd59a 40%, #ffc073 70%, #f5953f 100%)}
+#bridgeWrap{position:absolute;left:0;right:0;bottom:20%;height:40%;display:flex;align-items:flex-end;justify-content:center}
+#bridge{width:100%;max-width:960px} @keyframes rise{from{transform:translateY(120%)} to{transform:translateY(0)}}
+.bridge-rise{animation:rise 2000ms ease-out both}
+/* long text blocks */
+.long{background:#fff7ea;border:1px solid #ffd9a6;border-radius:14px;padding:14px}
+.long p{margin:.6em 0}
+details.acco{background:#f9fcff;border:1px solid #d9ecff;border-radius:14px;padding:10px 12px;margin:12px 0}
+summary{cursor:pointer;font-weight:700}
+/* utilities */
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hint{font-size:.95rem;color:#6b6b6b}
+footer{margin:18px auto;max-width:var(--maxw);color:#6b6b6b;padding:0 14px 120px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* read-only & selection */
+body.readonly :is(input,textarea,select){pointer-events:none;opacity:.95}
+.allow-select *{user-select:text !important} .no-select *{user-select:none}
+</style>
+</head>
+<body class="readonly no-select">
+<header class="site">
+  <nav class="wrap">
+    <div class="brand"><span class="dot"></span><span>淡江大橋</span><em> 互動策展｜全文版</em></div>
+    <div class="sp"></div>
+    <div class="row">
+      <button class="btn btn--ghost" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">首頁</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('act1').scrollIntoView({behavior:'smooth'})">幕1</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('act2').scrollIntoView({behavior:'smooth'})">幕2</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('act3').scrollIntoView({behavior:'smooth'})">幕3</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('act4').scrollIntoView({behavior:'smooth'})">幕4</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('act5').scrollIntoView({behavior:'smooth'})">幕5</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('act6').scrollIntoView({behavior:'smooth'})">幕6</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section id="home" class="card hero" aria-label="首頁：淡江大橋 2025 夕陽登場">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="mount" aria-hidden="true"></div>
+    <div class="water" aria-hidden="true"></div>
+    <div id="bridgeWrap">
+      <svg id="bridge" class="bridge-rise" viewBox="0 0 960 240" role="img" aria-label="淡江大橋 SVG 夕陽剪影">
+        <defs><linearGradient id="steel" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#70421f"/><stop offset="1" stop-color="#3b2412"/></linearGradient></defs>
+        <g opacity=".25"><rect x="0" y="190" width="960" height="50" fill="#6b3a14"/>
+          <ellipse cx="480" cy="210" rx="320" ry="12" fill="#b56f2e"/></g>
+        <rect x="60" y="140" width="840" height="6" rx="3" fill="url(#steel)"></rect>
+        <path d="M480 40 C 500 80 500 120 480 180 L 470 180 C 450 120 450 80 470 40 Z" fill="url(#steel)"/>
+        <g stroke="#8a4b1f" stroke-width="2">
+          <line x1="472" y1="84" x2="200" y2="140"/><line x1="472" y1="96" x2="260" y2="140"/>
+          <line x1="472" y1="108" x2="320" y2="140"/><line x1="472" y1="120" x2="380" y2="140"/>
+          <line x1="488" y1="84" x2="760" y2="140"/><line x1="488" y1="96" x2="700" y2="140"/>
+          <line x1="488" y1="108" x2="640" y2="140"/><line x1="488" y1="120" x2="580" y2="140"/>
+        </g>
+        <g><circle cx="260" cy="146" r="3" fill="#1bb67a"/><circle cx="710" cy="146" r="3" fill="#1bb67a"/>
+          <rect x="300" y="143" width="14" height="6" rx="2" fill="#1e88e5"/>
+          <rect x="640" y="143" width="14" height="6" rx="2" fill="#e53935"/></g>
+      </svg>
+    </div>
+    <div style="position:absolute;left:16px;bottom:16px;max-width:600px;background:rgba(255,255,255,.88);padding:12px 14px;border-radius:12px;box-shadow:var(--shadow)">
+      <h2 style="margin:.2em 0">苦守寒窯 30 年，終於等到你！</h2>
+      <div class="hint">從冷門工程 → 人人狂拍的跨海明星｜滑動開始 30 年奇幻之旅</div>
+    </div>
+  </section>
+
+  <!-- ACT 1 -->
+  <section id="act1" class="card">
+    <h2>🎬 幕1｜前世傳奇：等了 30 年才出現的橋！</h2>
+    <p><strong>副標：</strong>從「紙上談兵」到「終於合龍」，堪比八點檔的築橋史</p>
+    <div class="long" aria-label="幕1 全文">
+      <p><strong>一句話故事｜</strong>這是一段「從我小時候等到我小孩都會打手遊了」的神級拖延建設。</p>
+      <p>1980s，淡水人第一次聽到：「我們要蓋一座跨海大橋！」結果——先放著。</p>
+      <p>1992，六年國建把它放進資料夾。結果——又放著。</p>
+      <p>之後幾十年：</p>
+      <ul>
+        <li>預算卡住</li>
+        <li>環評卡住</li>
+        <li>地方反對卡住</li>
+        <li>國家重大建設大亂鬥卡住</li>
+        <li>招標流標七次（淡水 OS：我到底做錯什麼）</li>
+      </ul>
+      <p>終於終於，Zaha Hadid 建築團隊得標。「舞者般的橋塔」一亮相，全世界驚呼：原來跨海大橋也可以這麼美！</p>
+      <p>2019 年開工；2024 年 6 月合龍，淡水老街煙火直接放起來，阿嬤說：「等這座橋等到我的孫子都會背九九乘法了。」</p>
+    </div>
+
+    <details class="acco">
+      <summary>點開：時間軸隧道（互動示意＋年份節點）</summary>
+      <div class="row" style="margin-top:10px">
+        <label>年份</label>
+        <input id="year" type="range" min="1980" max="2025" value="1980" oninput="updateTimeline(this.value)">
+        <output id="yearOut">1980</output>
+      </div>
+      <div id="timelineOut" class="long" style="margin-top:8px" aria-live="polite"></div>
+      <div class="hint">1980s：構想／1992：六年國建／1998–2005：卡關與流標／2010s：Zaha 舞者靈感／2019：開工／2024：合龍／2025：夕陽登場</div>
+    </details>
+  </section>
+
+  <!-- ACT 2 -->
+  <section id="act2" class="card">
+    <h2>💃 幕2｜力與美：世界級的一柱擎天！</h2>
+    <p><strong>副標：</strong>這座橋為何只靠「一根塔」？Zaha 的瘋狂天才大公開</p>
+
+    <div class="long" aria-label="幕2 全文">
+      <p><strong>一句話故事｜</strong>「大橋要長得像在跳舞。」——Zaha Hadid 團隊</p>
+      <p>淡江大橋最神奇的地方是：它只靠一根塔就撐起全橋。塔高 211 公尺，像一位舞者，把身體挺直、肩膀一開，纜索像飄逸的袖子，撐起 450 公尺的主跨——這個數字，直接刷新「世界最長單塔斜張橋主跨距」紀錄。</p>
+      <p>不只工程強，還有美學堅持：「夕陽線不要被遮到！」因此橋塔特別做出一個優雅弧度，讓餘暉從塔身後灑落。CNN 評選 2025 年「全球最值得期待的建築」。台灣人：爽啦，終於輪到我們帥一波。</p>
+      <ul>
+        <li>塔高：211 m（淡水新地標）</li>
+        <li>主跨：450 m（單塔斜張橋世界第一）</li>
+        <li>纜索角度：靈感來自舞者袖擺</li>
+        <li>橋面分層：汽車／機車／單車／人行</li>
+        <li>預留未來輕軌：向前相容的設計</li>
+      </ul>
+    </div>
+
+    <details class="acco">
+      <summary>點開：3D 旋轉探索（互動示意＋熱點說明）</summary>
+      <div style="margin-top:10px">
+        <div id="towerCanvas" aria-label="塔身旋轉探索與熱點資訊" style="width:100%;height:300px;border-radius:12px;background:linear-gradient(#fff,#fff8ec);position:relative;overflow:hidden">
+          <svg id="tower" viewBox="0 0 120 200" width="160" height="260" style="position:absolute;left:50%;top:65%;transform:translate(-50%,-50%)" role="img" aria-label="塔身 SVG">
+            <defs><linearGradient id="tsteel" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#91623a"/><stop offset="1" stop-color="#4b2e18"/></linearGradient></defs>
+            <path d="M60 10 C75 50 75 110 60 190 L52 190 C37 110 37 50 52 10 Z" fill="url(#tsteel)"/>
+            <g stroke="#8a4b1f" stroke-width="3">
+              <line x1="57" y1="60" x2="0" y2="120"/><line x1="57" y1="80" x2="10" y2="120"/><line x1="57" y1="100" x2="20" y2="120"/>
+              <line x1="63" y1="60" x2="120" y2="120"/><line x1="63" y1="80" x2="110" y2="120"/><line x1="63" y1="100" x2="100" y2="120"/>
+            </g>
+            <rect x="0" y="120" width="120" height="6" rx="3" fill="#6b3a14"/>
+          </svg>
+        </div>
+        <div class="hint" style="margin-top:6px">熱點資訊：塔高 211m／主跨 450m／纜索靈感／橋面分層／預留輕軌</div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ACT 3 -->
+  <section id="act3" class="card">
+    <h2>🚗 幕3｜橋通路順：淡水 → 八里，只要 10 分鐘！</h2>
+    <p><strong>副標：</strong>告別塞車、告別繞 15 公里，交通一次到位</p>
+
+    <div class="long" aria-label="幕3 全文">
+      <p>以前要從淡水到八里：</p>
+      <ul>
+        <li>選項 A：關渡橋塞塞塞</li>
+        <li>選項 B：開去八里…要繞 15 km</li>
+        <li>選項 C：搭渡船，運氣好不會晃太大</li>
+      </ul>
+      <p>現在：上橋 10 分鐘到對岸。不只省時間，還減少台2線約三成車流。甚至未來輕軌接上來，北海岸交通會像多米諾骨牌一樣連得超順。</p>
+      <p><strong>桃園機場 → 淡水</strong>：最快可望 40 分鐘內達成（未來直達構想）。</p>
+    </div>
+
+    <details class="acco">
+      <summary>點開：通勤競速小遊戲（互動示意）</summary>
+      <div style="position:relative;height:130px;border-radius:12px;background:linear-gradient(90deg,#eaf7ff,#fff);margin-top:10px">
+        <div style="position:absolute;left:4%;right:4%;top:50%;height:4px;background:#ccc"></div>
+        <div id="carOld" style="position:absolute;top:calc(50% - 12px);left:4%;width:26px;height:26px;border-radius:6px;background:#e53935"></div>
+        <div id="carNew" style="position:absolute;top:calc(50% + 24px);left:4%;width:26px;height:26px;border-radius:6px;background:#1bb67a"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" onclick="runRace()">開始小比賽</button>
+        <span id="raceOut" class="hint">舊路（關渡橋） vs 新路（淡江大橋）</span>
+      </div>
+      <small class="note">＊數值為互動示意，實際行車時間依交通狀況而異。</small>
+    </details>
+  </section>
+
+  <!-- ACT 4 -->
+  <section id="act4" class="card">
+    <h2>🌍 幕4｜一日雙岸：淡水 × 八里 × 北海岸 超順路！</h2>
+    <p><strong>副標：</strong>早上紅毛城、下午十三行、傍晚漁人碼頭看夕陽</p>
+
+    <div class="long" aria-label="幕4 全文">
+      <p>淡江大橋通車後，淡水與八里真正「都市合體」。旅遊動線超級順：</p>
+      <ul>
+        <li><strong>上午：</strong>老街、紅毛城、小白宮</li>
+        <li><strong>下午：</strong>八里左岸騎車、十三行看展</li>
+        <li><strong>傍晚：</strong>漁人碼頭夕陽</li>
+        <li><strong>晚上：</strong>河邊散步吃宵夜</li>
+      </ul>
+      <p>加上水上活動（SUP、獨木舟、河口巡航），這條路線可以讓外國旅客一次感受「海、山、城、文化」。</p>
+      <p><strong>可點景點：</strong>紅毛城、小白宮、淡水老街、漁人碼頭、海關碼頭、沙崙海水浴場、淡水石滬、十三行博物館、八里左岸、八里渡船頭、自行車道、SUP／風帆／獨木舟、水域體驗與河口巡航…</p>
+    </div>
+
+    <details class="acco">
+      <summary>點開：行程自動生成器（互動示意）</summary>
+      <div class="hint" style="margin:10px 0">點下列籤籤加入行程（示意）：</div>
+      <div class="row" id="chips">
+        <button class="btn btn--ghost" onclick="addStop('紅毛城')">紅毛城</button>
+        <button class="btn btn--ghost" onclick="addStop('小白宮')">小白宮</button>
+        <button class="btn btn--ghost" onclick="addStop('淡水老街')">淡水老街</button>
+        <button class="btn btn--ghost" onclick="addStop('十三行博物館')">十三行博物館</button>
+        <button class="btn btn--ghost" onclick="addStop('八里左岸')">八里左岸</button>
+        <button class="btn btn--ghost" onclick="addStop('漁人碼頭夕陽')">漁人碼頭夕陽</button>
+        <button class="btn btn--ghost" onclick="addStop('SUP/獨木舟')">SUP/獨木舟</button>
+      </div>
+      <div id="plan" class="long" style="margin-top:8px">
+        <div><strong>我的雙岸一日遊：</strong><span id="stops">（尚未加入）</span></div>
+        <div id="itinerary" style="margin-top:6px"></div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ACT 5 -->
+  <section id="act5" class="card">
+    <h2>✨ 幕5｜未來願景：淡水超級升級計畫！</h2>
+    <p><strong>副標：</strong>國際飯店 × 電影城 × Shopping Mall × 海上活動 × 運動城</p>
+
+    <div class="long" aria-label="幕5 全文">
+      <p>交通提升後，最先跟著來的就是——<strong>投資</strong>。</p>
+      <p>淡海新市鎮附近，被視為下一個大開發基地。從國際級酒店，到商場、運動中心、電影城，各種「未來感場景」都有可能在這裡發生：</p>
+      <ul>
+        <li>國際級飯店（空中酒吧、無邊際泳池）</li>
+        <li>電影拍攝基地、主題園區</li>
+        <li>大型 shopping mall、美食中心</li>
+        <li>室內滑冰場、攀岩牆、室內衝浪池</li>
+        <li>全齡運動中心</li>
+        <li>八里港口改造：遊艇、煙火派對、河岸演唱會</li>
+      </ul>
+      <p>對國際旅客來說：<strong>桃園機場 → 40 分鐘到八里</strong>，根本台版雪梨港；八里 → 淡江大橋 → 淡水，一次享受運動、步道、夕陽、文化與夜景。</p>
+    </div>
+
+    <details class="acco">
+      <summary>點開：未來 360°（互動示意）</summary>
+      <div class="row" style="margin-top:8px">
+        <label class="row"><input id="modeNight" type="checkbox" onchange="toggleNight(this.checked)"> 夜間模式</label>
+        <button class="btn btn--ghost" onclick="spark()">放煙火</button>
+      </div>
+      <div id="sky" style="height:240px;border-radius:12px;background:linear-gradient(180deg,#a7d3ff,#fff);position:relative;overflow:hidden;margin-top:8px"></div>
+      <div class="hint" style="margin-top:6px">點選籤籤查看願景說明：</div>
+      <div class="row">
+        <button class="btn btn--ghost" onclick="vision('國際級飯店（天空酒吧、無邊際泳池）')">🏨 國際飯店</button>
+        <button class="btn btn--ghost" onclick="vision('電影拍攝基地／主題園區')">🎬 電影城</button>
+        <button class="btn btn--ghost" onclick="vision('大型 shopping mall ＋ 美食中心')">🛍️ Shopping Mall</button>
+        <button class="btn btn--ghost" onclick="vision('室內滑冰場／攀岩／室內衝浪池')">🏒 運動中心</button>
+        <button class="btn btn--ghost" onclick="vision('遊艇煙火派對／河岸演唱會')">🛥️ 港灣活動</button>
+      </div>
+      <div id="visionOut" class="long" style="margin-top:8px"></div>
+    </details>
+  </section>
+
+  <!-- ACT 6 -->
+  <section id="act6" class="card">
+    <h2>🌈 幕6｜「我的夢想淡水」全民沙盒</h2>
+    <p><strong>副標：</strong>拖曳圖示，打造你的夢想版本（會記錄位置，僅本機示意）</p>
+
+    <div class="long" aria-label="幕6 全文">
+      <p>每個人心中都有一個「理想的淡水」。有些人想要摩天輪，有些人想要海上咖啡館，有些人想要飛天纜車到觀音山。這一幕讓你自己畫自己的夢想淡水！</p>
+      <ul>
+        <li>拖曳放置圖示：🎡 摩天輪、🏖️ 海上餐廳、🎢 遊樂園、🎨 藝術雕塑公園、🏨 飯店、🚡 纜車、🏄 SUP、🛥️ 遊艇碼頭…</li>
+        <li>放置位置會被記錄，統計大家的熱門擺放（本機示意）</li>
+        <li>輸出你的「夢想淡水海報」（可擴充）</li>
+      </ul>
+    </div>
+
+    <details class="acco">
+      <summary>點開：拖曳畫布（互動示意）</summary>
+      <div class="row" style="margin:8px 0">
+        <button class="btn btn--ghost" onclick="addEmoji('🎡')">🎡</button>
+        <button class="btn btn--ghost" onclick="addEmoji('🏖️')">🏖️</button>
+        <button class="btn btn--ghost" onclick="addEmoji('🚡')">🚡</button>
+        <button class="btn btn--ghost" onclick="addEmoji('🛥️')">🛥️</button>
+        <button class="btn btn--ghost" onclick="addEmoji('🎨')">🎨</button>
+        <button class="btn btn--ghost" onclick="addEmoji('🏄')">🏄</button>
+        <button class="btn" onclick="saveBoard()">儲存</button>
+        <button class="btn btn--ghost" onclick="resetBoard()">清空</button>
+      </div>
+      <div id="board" style="height:360px;border-radius:12px;background:#f7fbff;border:1px dashed #90caf9;position:relative;overflow:hidden"></div>
+      <div class="hint" style="margin-top:6px">拖動表情在畫布上任意擺放（本機儲存，不會上傳）。</div>
+    </details>
+  </section>
+
+  <!-- Social -->
+  <section class="card">
+    <h2>📣 社群專區</h2>
+    <div class="long">
+      <p><strong>吸睛主標（範例）：</strong></p>
+      <ul>
+        <li>淡水人等 30 年，這次真的等到了！</li>
+        <li>跨海一柱擎天：淡江大橋 6 大秘密</li>
+        <li>你以為是交通建設？其實是整個北海岸的未來！</li>
+      </ul>
+    </div>
+    <div class="row">
+      <button class="btn" onclick="shareSite()">分享本頁</button>
+      <span class="hint">支援 iOS / Android 原生分享（若裝置支援）。</span>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <section class="card">
+    <h2>📌 免責聲明</h2>
+    <div class="long">
+      本網頁內容為概念展示；願景內容非官方定案；互動資料基於公開資訊之示意；圖像皆為示意；如有差異，一切以官方公告為準。<br>
+      <small class="note">更新日期：2025-11-29（Asia/Taipei）</small>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="row tools">
+    <label class="row">字級：<input id="zoom" type="range" min="90" max="130" value="100" oninput="zoomFont(this.value)"><output id="zoomOut">100%</output></label>
+    <label class="row">高對比：<input id="contrast" type="checkbox" onchange="toggleContrast(this.checked)"></label>
+    <label class="row">唯讀保護：<input id="protect" type="checkbox" checked onchange="toggleProtect(this.checked)"></label>
+    <label class="row">允許選取：<input id="toggleSelect" type="checkbox" onchange="toggleSelect(this.checked)"></label>
+  </div>
+  <p class="hint">本互動網頁由 <strong>HSUAN~</strong> 發想策展，並由 <strong>ChatGPT（OpenAI）</strong> 協作製作。單一檔案、零外掛、零等待載入。</p>
+</footer>
+
+<script>
+/* accessibility */
+function zoomFont(val){ document.documentElement.style.setProperty('--base',(val/100*18.5)+'px'); document.getElementById('zoomOut').value=val+'%'; }
+function toggleContrast(on){ document.body.style.filter = on ? 'contrast(1.15) saturate(1.05)' : 'none'; }
+function toggleProtect(on){ document.body.classList.toggle('readonly', on); }
+function toggleSelect(on){ document.body.classList.toggle('allow-select', on); document.body.classList.toggle('no-select', !on); }
+/* act1 */
+const stories = [
+  {y:1980, t:'1980s｜首次提出跨海大橋構想。'},
+  {y:1992, t:'1992｜六年國建納入清單，所有人都在等。'},
+  {y:1998, t:'1998–2005｜預算、環評與招標卡關，七度流標（大家：哭啊）。'},
+  {y:2010, t:'2010s｜Zaha Hadid 團隊提出「舞者般」設計。'},
+  {y:2019, t:'2019｜正式開工，終於踏出關鍵一步。'},
+  {y:2024, t:'2024｜合龍成功，全城狂歡。'},
+  {y:2025, t:'2025｜夕陽登場，準備迎接通車。'}
+];
+function updateTimeline(val){
+  const out = document.getElementById('timelineOut'); const near = stories.reduce((p,c)=> Math.abs(c.y-val)<Math.abs(p.y-val)?c:p); out.textContent=near.t;
+  document.getElementById('yearOut').value = val;
+}
+updateTimeline(1980);
+/* act3 */
+function runRace(){
+  const oldC=document.getElementById('carOld'), newC=document.getElementById('carNew');
+  oldC.style.transition='none'; newC.style.transition='none'; oldC.style.left='4%'; newC.style.left='4%';
+  setTimeout(()=>{ oldC.style.transition='left 12s cubic-bezier(.2,.8,.3,1)'; newC.style.transition='left 6s cubic-bezier(.2,.8,.3,1)';
+    requestAnimationFrame(()=>{ oldC.style.left='96%'; newC.style.left='96%'; });
+    setTimeout(()=>{ document.getElementById('raceOut').textContent='你走新路少花 6 秒，少繞約 15 公里（示意）。'; }, 6200);
+  }, 50);
+}
+/* act4 planner */
+let picks=[];
+function addStop(name){
+  if(!picks.includes(name)){ picks.push(name); renderPlan(); }
+}
+function renderPlan(){
+  const s=document.getElementById('stops'); s.textContent = picks.length? picks.join('、') : '（尚未加入）';
+  if(picks.length){
+    const timePer=60, total=picks.length*timePer;
+    const crosses=picks.some(x=> x.includes('十三行')||x.includes('八里')) ? '✔ 會經過淡江大橋' : '可選擇是否經過淡江大橋';
+    document.getElementById('itinerary').innerHTML = `<div><strong>預估時間：</strong>${total} 分鐘（示意）</div><div><strong>跨橋：</strong>${crosses}</div>`;
+  }else{
+    document.getElementById('itinerary').innerHTML = '';
+  }
+}
+/* act5 */
+function toggleNight(on){
+  const sky=document.getElementById('sky');
+  sky.style.background = on ? 'linear-gradient(180deg,#081b33,#001220)' : 'linear-gradient(180deg,#a7d3ff,#fff)';
+  sky.style.color = on ? '#fff' : '#000';
+}
+function spark(){
+  const sky=document.getElementById('sky');
+  for(let i=0;i<14;i++){
+    const s=document.createElement('div'); s.style.position='absolute'; s.style.left=(Math.random()*90+5)+'%'; s.style.bottom='6%';
+    s.style.width='4px'; s.style.height='4px'; s.style.borderRadius='50%'; s.style.background='#ffeb3b'; s.style.transition='transform 1.8s ease-in, opacity 1.8s';
+    sky.appendChild(s); requestAnimationFrame(()=>{ s.style.transform='translateY(-40px)'; s.style.opacity='.3'; });
+    setTimeout(()=> s.remove(), 1900);
+  }
+}
+function vision(text){ document.getElementById('visionOut').textContent=text; }
+/* act6 board */
+function addEmoji(emo){
+  const board=document.getElementById('board'); const n=document.createElement('div');
+  n.textContent=emo; n.style.position='absolute'; n.style.left=(Math.random()*80+10)+'%'; n.style.top=(Math.random()*70+10)+'%';
+  n.style.transform='translate(-50%,-50%)'; n.style.width='64px'; n.style.height='64px'; n.style.borderRadius='14px';
+  n.style.background='#fff'; n.style.display='flex'; n.style.alignItems='center'; n.style.justifyContent='center'; n.style.boxShadow='0 6px 20px rgba(0,0,0,.08)';
+  n.style.cursor='move'; n.draggable=true; n.addEventListener('dragstart',ev=>{ ev.dataTransfer.setData('text/plain','drag'); n._dx=ev.offsetX; n._dy=ev.offsetY; });
+  board.appendChild(n);
+  n.addEventListener('dragend',ev=>{ const r=board.getBoundingClientRect(); n.style.left=(ev.clientX-r.left)+'px'; n.style.top=(ev.clientY-r.top)+'px'; saveBoard(); });
+  saveBoard();
+}
+function resetBoard(){ localStorage.removeItem('dreamBoard'); document.getElementById('board').innerHTML=''; }
+function saveBoard(){
+  const nodes=[...document.getElementById('board').children].map(n=>({emoji:n.textContent,left:n.style.left,top:n.style.top}));
+  localStorage.setItem('dreamBoard', JSON.stringify(nodes));
+}
+function loadBoard(){
+  const raw=localStorage.getItem('dreamBoard'); if(!raw) return;
+  const nodes=JSON.parse(raw); nodes.forEach(o=>{ addEmoji(o.emoji); const last=document.getElementById('board').lastElementChild; last.style.left=o.left; last.style.top=o.top; });
+}
+/* share */
+async function shareSite(){
+  const data={title:'淡江大橋互動策展｜全文版', text:'老少咸宜、零外掛、零等待載入', url: location.href};
+  if(navigator.share){ try{ await navigator.share(data);}catch(e){} } else { alert('複製網址分享：'+location.href); }
+}
+/* init */
+window.addEventListener('DOMContentLoaded', loadBoard);
+</script>
+</body>
+</html>
